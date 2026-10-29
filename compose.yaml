@@ -1,6 +1,7 @@
 services:
-  api:
-    build: .
-    image: piops-api:0.0.1
-    ports:
-      - "${PIOPS_BIND_IP:-127.0.0.1}:8000:8000"
+    podinfo:
+        image: ghcr.io/stefanprodan/podinfo:6.15.0
+        command: ./podinfo --port=9898 --port-metrics=9797 
+        ports:
+            - "${PIOPS_BIND_IP:-127.0.0.1}:9898:9898"
+        restart: unless-stopped
