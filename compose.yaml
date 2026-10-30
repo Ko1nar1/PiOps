@@ -5,3 +5,20 @@ services:
         ports:
             - "${PIOPS_BIND_IP:-127.0.0.1}:9898:9898"
         restart: unless-stopped
+    prometheus:
+        image: prom/prometheus:v3.13.5
+        ports:
+            - "127.0.0.1:9090:9090"
+        volumes:
+            - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro,Z
+            - prometheus_data:/prometheus
+        mem_limit: 512m
+        restart: unless-stopped
+    blackbox:
+        image: prom/blackbox-exporter:v0.29.1
+        volumes:
+            - ./monitoring/Blackbox.yml:/etc/blackbox_exporter/config.yml:ro,Z
+        restart: unless-stopped
+
+volumes:
+    prometheus_data:
