@@ -2,10 +2,19 @@ global:
     scrape_interval: 15s
     scrape_timeout: 5s
 
+
 scrape_configs:
     - job_name: podinfo
       static_configs:
         - targets: ["podinfo:9797"]
+
+    - job_name: podinfo-http
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+        target: ["http://podinfo:9898/"]
+      static_configs:
+        - targets: ["blackbox:9115"]
 
 storage:
     tsdb:
