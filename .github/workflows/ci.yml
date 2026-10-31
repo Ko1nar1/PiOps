@@ -1,0 +1,39 @@
+name: PiOps CI
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+jobs:
+    validate:
+        runs-on: ubuntu-24.04
+        timeout-minutes: 5
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Validate Compose
+              run: docker compose config --quiet
+
+            - name: Validate Prometheus configuration
+              run: |
+                  docker run --rm \
+                    --volume "$PWD/monitoring:/config:ro" \
+                    --entrypoint promtool \
+                    prom/prometheus:v3.13.5 \
+                    check config /config/prometheus.yml
+
+            - name: Validate Blackbox configuration
+              run: |
+                  docker run --rm \
+                    --volume "$PWD/monitoring:/config:ro" \
+                    prom/blackbox-exporter:v0.29.1 \
+                    --config.file=/config/Blackbox.yml \
+                    --config.check
