@@ -21,3 +21,6 @@ jobs:
               run: |
                   docker --version
                   docker compose version
+
+            - name: Check Docker daemon
+              run: docker ps
