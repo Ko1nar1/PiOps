@@ -1,0 +1,7 @@
+groups:
+  - name: podinfo
+    interval: 15s
+    rules:
+      - alert: Podinfo_HTTP_Probe_Failed
+        expr: probe_success{job="podinfo-http"} == 0
+        for: 1m

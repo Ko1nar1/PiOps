@@ -34,7 +34,7 @@ jobs:
                   test -r "$PIOPS_DEPLOY_DIR/.env"
                   mkdir -p "$PIOPS_DEPLOY_DIR/monitoring"
                   install -m 644 compose.yaml "$PIOPS_DEPLOY_DIR/compose.yaml"
-                  install -m 644 monitoring/prometheus.yml monitoring/Blackbox.yml "$PIOPS_DEPLOY_DIR/monitoring/"
+                  install -m 644 monitoring/prometheus.yml monitoring/Blackbox.yml monitoring/alerts.yml "$PIOPS_DEPLOY_DIR/monitoring/"
 
             - name: Validate deployment configuration
               working-directory: ${{ env.PIOPS_DEPLOY_DIR }}
