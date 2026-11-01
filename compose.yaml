@@ -29,7 +29,15 @@ services:
             - /home/piops-runner/piops-secrets/ntfy_webhook_url:/run/secrets/ntfy_webhook_url:ro,Z
             - alertmanager_data:/alertmanager
         restart: unless-stopped
+    grafana:
+        image: grafana/grafana:13.3.0
+        ports:
+            - "127.0.0.1:3000:3000"
+        volumes:
+            - grafana_data:/var/lib/grafana
+        restart: unless-stopped
 
 volumes:
     prometheus_data:
     alertmanager_data:
+    grafana_data:
