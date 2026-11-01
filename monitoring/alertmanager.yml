@@ -1,0 +1,12 @@
+route:
+  receiver: ntfy
+  group_by: [alertname]
+  group_wait: 10s
+  group_interval: 30s
+  repeat_interval: 4h
+
+receivers:
+  - name: ntfy
+    webhook_configs:
+      - url_file: /run/secrets/ntfy_webhook_url
+        send_resolved: true

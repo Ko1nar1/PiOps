@@ -20,6 +20,16 @@ services:
         volumes:
             - ./monitoring/Blackbox.yml:/etc/blackbox_exporter/config.yml:ro,Z
         restart: unless-stopped
+    alertmanager:
+        image: prom/alertmanager:v0.34.2
+        ports:
+            - "127.0.0.1:9093:9093"
+        volumes:
+            - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro,Z
+            - /home/piops-runner/piops-secrets/ntfy_webhook_url:/run/secrets/ntfy_webhook_url:ro,Z
+            - alertmanager_data:/alertmanager
+        restart: unless-stopped
 
 volumes:
     prometheus_data:
+    alertmanager_data:

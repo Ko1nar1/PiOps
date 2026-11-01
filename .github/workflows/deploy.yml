@@ -32,9 +32,15 @@ jobs:
             - name: Prepare deployment files
               run: |
                   test -r "$PIOPS_DEPLOY_DIR/.env"
+                  test -f /home/piops-runner/piops-secrets/ntfy_webhook_url
+                  test -r /home/piops-runner/piops-secrets/ntfy_webhook_url
+                  test -s /home/piops-runner/piops-secrets/ntfy_webhook_url
                   mkdir -p "$PIOPS_DEPLOY_DIR/monitoring"
                   install -m 644 compose.yaml "$PIOPS_DEPLOY_DIR/compose.yaml"
-                  install -m 644 monitoring/prometheus.yml monitoring/Blackbox.yml monitoring/alerts.yml "$PIOPS_DEPLOY_DIR/monitoring/"
+                  install -m 644 monitoring/prometheus.yml "$PIOPS_DEPLOY_DIR/monitoring/"
+                  install -m 644 monitoring/Blackbox.yml "$PIOPS_DEPLOY_DIR/monitoring/"
+                  install -m 644 monitoring/alerts.yml "$PIOPS_DEPLOY_DIR/monitoring/"
+                  install -m 644 monitoring/alertmanager.yml "$PIOPS_DEPLOY_DIR/monitoring/"
 
             - name: Validate deployment configuration
               working-directory: ${{ env.PIOPS_DEPLOY_DIR }}
@@ -46,10 +52,16 @@ jobs:
 
             - name: Restart monitoring services
               working-directory: ${{ env.PIOPS_DEPLOY_DIR }}
-              run: docker compose -p piops --env-file .env -f compose.yaml restart prometheus blackbox
+              run: docker compose -p piops --env-file .env -f compose.yaml restart prometheus blackbox alertmanager
 
             - name: Wait for Prometheus readiness
               run: |
                   curl --fail --silent --show-error \
                     --retry 30 --retry-all-errors --retry-delay 2 \
                     --max-time 5 http://127.0.0.1:9090/-/ready
+
+            - name: Wait for Alertmanager readiness
+              run: |
+                  curl --fail --silent --show-error \
+                    --retry 30 --retry-all-errors --retry-delay 2 \
+                    --max-time 5 http://127.0.0.1:9093/-/ready

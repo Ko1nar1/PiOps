@@ -38,3 +38,11 @@ jobs:
                     prom/blackbox-exporter:v0.29.1 \
                     --config.file=/config/Blackbox.yml \
                     --config.check
+
+            - name: Validate Alertmanager configuration
+              run: |
+                  docker run --rm \
+                    --volume "$PWD/monitoring:/config:ro" \
+                    --entrypoint amtool \
+                    prom/alertmanager:v0.34.2 \
+                    check-config /config/alertmanager.yml
